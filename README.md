@@ -28,6 +28,7 @@ Detected defect heatmaps are processed and filtered by intensity thresholds.
 **6. Web-Based Visualization:**
 Defect projections are shown via a Plotly Dash app with rotation, zoom, and overlay features.
 
+![pipleline_overview](https://github.com/ziadabohalawa/6DoF-Pose-Estimation-and-Defect-Projection/blob/32474e4ba11b792ab8ca935a9ce0b3423d89c78e/Pipeline_overview.png)
 
 
 # Installation
