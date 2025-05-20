@@ -1,3 +1,34 @@
+# 6DoF Pose Estimation and Defect Projection System
+This repository contains the implementation of a system for accurate 6-DoF pose estimation and 3D defect projection of industrial objects. The solution combines deep learning-based pose detection with classical refinement and visualization techniques to enable precise, real-time analysis of object surfaces.
+# Core Components
+FoundationPose – Initial 6DoF object pose estimation from RGB-D data.
+
+ICP (Iterative Closest Point) – Geometric refinement of the pose using 3D point cloud alignment.
+
+Ray Tracing – Accurate projection of detected 2D image defects onto a 3D mesh surface.
+
+Plotly Dash – Interactive 3D web visualization for real-time defect inspection.
+
+# Pipeline Overview
+**Data Acquisition:**
+RGB, depth image, and point cloud data are captured using Azure Kinect DK.
+
+**Initial Pose Estimation:**
+The FoundationPose model estimates the object’s 6DoF pose from RGB-D input.
+
+**Pose Refinement:**
+ICP aligns the 3D model to the scene point cloud for improved accuracy.
+
+**Defect Detection:**
+Detected defect heatmaps are processed and filtered by intensity thresholds.
+
+**Ray Tracing Projection:**
+2D heatmap pixels are back-projected onto the 3D mesh using ray-mesh intersection.
+
+**Web-Based Visualization:**
+Defect projections are shown via a Plotly Dash app with rotation, zoom, and overlay features.
+
+
 
 # Installation
 
@@ -126,6 +157,10 @@ Use the `--debug` flag for in-depth troubleshooting:
 - Setting `--debug 2` enables debugging for FoundationPose steps.
 - Setting `--debug 3` enables debugging for ICP steps.
 
+## Notes
+This repo assumes objects are pre-scanned and available as 3D meshes.
+
+Heatmaps can be generated using any external defect detection method.
 
 ## Acknowledgements
 
