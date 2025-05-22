@@ -220,5 +220,5 @@ def run_dash_app(data_q, capture_q):
     global data_queue, capture_queue
     data_queue = data_q
     capture_queue = capture_q
-    app.run_server(debug=False, use_reloader=False, host='0.0.0.0', port=8050)
+    app.run(debug=False, use_reloader=False, host='0.0.0.0', port=8050)
 

@@ -160,7 +160,7 @@ class KinectReader:
               return np.zeros((self.color_H, self.color_W), dtype=np.uint8)
 
     def get_heatmap(self, color_image):
-        npy_file = f"demo_data/turbine/heatmap/0002.npy"
+        npy_file = f"{self.base_dir}/heatmap/0002.npy"
         heatmap_data = np.load(npy_file)
         heatmap_size = heatmap_data.shape[0]
         
@@ -637,7 +637,7 @@ class DataReader:
               return np.zeros((self.color_H, self.color_W), dtype=np.uint8)
 
   def get_heatmap(self, color_image):
-      npy_file = f"demo_data/turbine/heatmap/0002.npy"
+      npy_file = f"{self.base_dir}/heatmap/0002.npy"
       heatmap_data = np.load(npy_file)
       
       heatmap_size = heatmap_data.shape[0]

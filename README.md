@@ -30,24 +30,28 @@ Defect projections are shown via a Plotly Dash app with rotation, zoom, and over
 
 ![pipleline_overview](https://github.com/ziadabohalawa/6DoF-Pose-Estimation-and-Defect-Projection/blob/32474e4ba11b792ab8ca935a9ce0b3423d89c78e/Pipeline_overview.png)
 
+# Data prepare
+1. Download all network weights from here and put them under the folder weights/. For the refiner, you will need 2023-10-28-18-33-37. For scorer, you will need 2024-01-11-20-02-45.
+
+2. Download demo data and extract them under the folder demo_data/
 
 # Installation
 
 ### Conda environment Setup
 
 ```bash
-# navigate to the root direcory of the project
-cd 2d_3d_pe_dp/
+cd 6DoF_PE_DP/
 
-# create conda environment
-conda create -n foundationpose python=3.9
-
-# activate conda environment
-conda activate foundationpose
+# Create a new Conda environment with Python 3.9
+conda create -n pedp python=3.9
+conda activate pedp
 
 # Install Eigen3 3.4.0 under conda environment
 conda install conda-forge::eigen=3.4.0
 export CMAKE_PREFIX_PATH="$CMAKE_PREFIX_PATH:/eigen/path/under/conda"
+
+# Install PyTorch 2.0.0 + CUDA 11.8
+pip install torch==2.0.0+cu118 torchvision==0.15.1+cu118 torchaudio==2.0.1+cu118 --extra-index-url https://download.pytorch.org/whl/cu118
 
 # install dependencies
 python -m pip install -r requirements.txt
@@ -61,8 +65,11 @@ python -m pip install --quiet --no-cache-dir kaolin==0.15.0 -f https://nvidia-ka
 # PyTorch3D
 python -m pip install --quiet --no-index --no-cache-dir pytorch3d -f https://dl.fbaipublicfiles.com/pytorch3d/packaging/wheels/py39_cu118_pyt200/download.html
 
-# Build extensions
-CMAKE_PREFIX_PATH=$CONDA_PREFIX/lib/python3.9/site-packages/pybind11/share/cmake/pybind11 bash build_all_conda.sh
+# Set CMAKE_PREFIX_PATH
+export CMAKE_PREFIX_PATH=$CONDA_PREFIX/lib/python3.9/site-packages/pybind11/share/cmake/pybind11
+
+# Build the C++/CUDA extensions
+bash build_all_conda.sh
 ```
 
 ### docker setup
@@ -117,7 +124,7 @@ data_folder/
 ├── mesh/                             # 3D model files of the object
 │   ├── model.obj                     # Original 3D model in OBJ format
 │   ├── model.ply                     # 3D model in PLY format
-│   └── model_scaled_down.obj         # Downscaled model
+│   └── model_scaled_down.obj         # Downscaled model 
 │
 ├── pcd/                              # Point Cloud Data captured from the scene
 │
@@ -161,7 +168,11 @@ Use the `--debug` flag for in-depth troubleshooting:
 ## Notes
 This repo assumes objects are pre-scanned and available as 3D meshes.
 
-Heatmaps can be generated using any external defect detection method.
+The file model_scaled_down.obj has been uniformly scaled down by a factor of 1000.
+
+In the live run a Kinect Azure is needed, the data_foler should contain the meshes (mesh folder), icp_parameters.json and a mask of the Object.
+
+Heatmaps can be generated using any external defect detection method, Just Update the get_heatmap function in datareader.py to implement the defect detection method
 
 ## Acknowledgements
 
