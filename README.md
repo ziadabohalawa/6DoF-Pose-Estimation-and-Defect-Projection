@@ -31,9 +31,9 @@ Defect projections are shown via a Plotly Dash app with rotation, zoom, and over
 ![pipleline_overview](https://github.com/ziadabohalawa/6DoF-Pose-Estimation-and-Defect-Projection/blob/32474e4ba11b792ab8ca935a9ce0b3423d89c78e/Pipeline_overview.png)
 
 # Data prepare
-1. Download all network weights from here and put them under the folder weights/. For the refiner, you will need 2023-10-28-18-33-37. For scorer, you will need 2024-01-11-20-02-45.
+1. Download all network weights from [here](https://drive.google.com/drive/folders/1DFezOAD0oD1BblsXVxqDsl8fj0qzB82i) and put them under the folder weights/. For the refiner, you will need 2023-10-28-18-33-37. For scorer, you will need 2024-01-11-20-02-45.
 
-2. Download demo data and extract them under the folder demo_data/
+2. [Download demo data](https://drive.google.com/drive/folders/1pRyFmxYXmAnpku7nGRioZaKrVJtIsroP) and extract them under the folder demo_data/
 
 # Installation
 
