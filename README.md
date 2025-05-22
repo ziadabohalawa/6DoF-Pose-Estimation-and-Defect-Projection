@@ -166,13 +166,13 @@ Use the `--debug` flag for in-depth troubleshooting:
 - Setting `--debug 3` enables debugging for ICP steps.
 
 ## Notes
-This repo assumes objects are pre-scanned and available as 3D meshes.
+- This repo assumes objects are pre-scanned and available as 3D meshes.
 
-The file model_scaled_down.obj has been uniformly scaled down by a factor of 1000.
+- The file model_scaled_down.obj has been uniformly scaled down by a factor of 1000.
 
-In the live run a Kinect Azure is needed, the data_foler should contain the meshes (mesh folder), icp_parameters.json and a mask of the Object.
+- In the live run a Kinect Azure is needed, the data_foler should contain the meshes (mesh folder), icp_parameters.json and a mask of the Object.
 
-Heatmaps can be generated using any external defect detection method, Just Update the get_heatmap function in datareader.py to implement the defect detection method
+- Heatmaps can be generated using any external defect detection method, Just Update the get_heatmap function in datareader.py to implement the defect detection method
 
 ## Acknowledgements
 
