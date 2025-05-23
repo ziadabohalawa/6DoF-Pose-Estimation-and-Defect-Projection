@@ -107,6 +107,238 @@ python run.py --test_scene_dir demo_data/tless_07 --demo
 # for a live run with Azure Kinect DK:
 python run.py --test_scene_dir demo_data/data_folder --capture_background True
 ```
+
+# AWS Deployment
+
+This guide helps you deploy the `6DoF_PE_DP` pipeline on an AWS EC2 instance with either a **fully automated script** or **manual setup steps**.
+
+---
+
+## 1️⃣ Prepare S3 Storage
+
+### 1.1 Create an S3 Bucket
+
+Create a bucket named:
+
+```text
+6dof-pe-dp-bucket
+```
+
+> Make sure your EC2 IAM role has `AmazonS3ReadOnlyAccess`.
+
+### 1.2 Upload Project Assets
+
+From your local machine:
+
+```bash
+aws s3 cp demo_data/ s3://6dof-pe-dp-bucket/demo_data/ --recursive
+aws s3 cp weights/ s3://6dof-pe-dp-bucket/weights/ --recursive
+```
+
+---
+
+## 2️⃣ Launch and Connect to an EC2 Instance
+
+### 2.1 Instance Configuration
+
+* **Instance Type:** `g4dn.xlarge`
+* **AMI:** Ubuntu 22.04
+* **Storage:** 75 GB (gp2 or gp3)
+* **IAM Role:** With S3 read access
+* **Security Group:** Allow TCP port `22` (SSH) and `8050` (web access)
+
+### 2.2 Connect via SSH
+
+```bash
+ssh -X -i your-key.pem ubuntu@<EC2_PUBLIC_IP>
+```
+
+---
+
+## 3️⃣ Clone the Repository
+
+```bash
+git clone https://github.com/ziadabohalawa/6DoF_PE_DP.git
+cd 6DoF_PE_DP
+```
+
+---
+
+## 4️⃣ Set Up the Environment
+
+Choose one of the following setup methods:
+
+---
+
+### 🔹 Option A: Automated Setup (Recommended)
+
+1. Run the provided script:
+
+   ```bash
+   bash setup_env.sh
+   ```
+
+2. Once it completes, proceed to **Step 8: Reboot & Build CUDA Extensions**.
+
+---
+
+### 🔹 Option B: Manual Setup
+
+Follow the steps below **in order** to manually configure the system.
+
+
+
+## 5️⃣ Manual Setup Steps
+
+### 5.1 Install System & Python Dependencies
+
+```bash
+sudo apt update && sudo apt upgrade -y
+sudo apt install -y git unzip ffmpeg libgl1 software-properties-common \
+  build-essential cmake gcc-11 g++-11 libboost-all-dev libeigen3-dev \
+  xauth xorg wget curl python3-pip
+
+sudo add-apt-repository -y ppa:deadsnakes/ppa
+sudo apt update
+sudo apt install -y python3.9 python3.9-venv python3.9-dev
+
+python3.9 -m venv ~/6dof_pe_dp
+source ~/6dof_pe_dp/bin/activate
+```
+
+### 5.2 Install AWS CLI, Pybind11 & Update PATH
+
+```bash
+pip install --upgrade pip
+pip install awscli pybind11[global]
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+export CMAKE_PREFIX_PATH=$(pybind11-config --cmakedir)
+```
+
+---
+
+## 6️⃣ Install GPU, CUDA & Project Dependencies
+
+### 6.1 Install CUDA 11.8
+
+```bash
+wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb
+sudo dpkg -i cuda-keyring_1.1-1_all.deb
+sudo apt update
+sudo apt install -y cuda-toolkit-11-8
+```
+
+### 6.2 Install NVIDIA Driver 535
+
+```bash
+sudo add-apt-repository -y ppa:graphics-drivers/ppa
+sudo apt update
+sudo apt install -y nvidia-driver-535
+```
+
+### 6.3 Set Environment Variables
+
+```bash
+echo 'export CUDA_HOME=/usr/local/cuda-11.8' >> ~/.bashrc
+echo 'export PATH=$CUDA_HOME/bin:$PATH' >> ~/.bashrc
+echo 'export LD_LIBRARY_PATH=$CUDA_HOME/lib64:$LD_LIBRARY_PATH' >> ~/.bashrc
+echo 'export TORCH_CUDA_ARCH_LIST="7.5"' >> ~/.bashrc
+echo 'source ~/6dof_pe_dp/bin/activate' >> ~/.bashrc
+source ~/.bashrc
+```
+
+---
+
+## 7️⃣ Set Up the Project
+
+### 7.1 Install Python Dependencies
+
+```bash
+cd ~/6DoF_PE_DP
+
+pip install torch==2.0.0+cu118 torchvision==0.15.1+cu118 torchaudio==2.0.1+cu118 \
+  --extra-index-url https://download.pytorch.org/whl/cu118
+
+pip install -r requirements.txt
+pip install git+https://github.com/NVlabs/nvdiffrast.git
+pip install kaolin==0.15.0 -f https://nvidia-kaolin.s3.us-east-2.amazonaws.com/torch-2.0.0_cu118.html
+pip install pytorch3d -f https://dl.fbaipublicfiles.com/pytorch3d/packaging/wheels/py39_cu118_pyt200/download.html
+```
+
+### 7.2 Download Demo Data and Model Weights
+
+```bash
+mkdir -p demo_data weights
+aws s3 cp s3://6dof-pe-dp-bucket/demo_data/ demo_data/ --recursive
+aws s3 cp s3://6dof-pe-dp-bucket/weights/ weights/ --recursive
+```
+
+### 7.3 Install Azure Kinect SDK
+
+```bash
+mkdir -p ~/6DoF_PE_DP/k4a_tools && cd ~/6DoF_PE_DP/k4a_tools
+
+# Install dependency
+wget http://ftp.de.debian.org/debian/pool/main/libs/libsoundio/libsoundio1_1.1.0-1_amd64.deb
+sudo dpkg -i libsoundio1_1.1.0-1_amd64.deb
+
+# Install Kinect SDK
+wget https://packages.microsoft.com/ubuntu/18.04/prod/pool/main/libk/libk4a1.4/libk4a1.4_1.4.1_amd64.deb
+wget https://packages.microsoft.com/ubuntu/18.04/prod/pool/main/libk/libk4a1.4-dev/libk4a1.4-dev_1.4.1_amd64.deb
+wget https://packages.microsoft.com/ubuntu/18.04/prod/pool/main/k/k4a-tools/k4a-tools_1.4.1_amd64.deb
+
+sudo dpkg -i libk4a1.4_1.4.1_amd64.deb
+sudo dpkg -i libk4a1.4-dev_1.4.1_amd64.deb
+sudo dpkg -i k4a-tools_1.4.1_amd64.deb
+sudo apt-get install -f -y
+```
+
+---
+
+## 8️⃣ Reboot & Build CUDA Extensions
+
+### 8.1 Reboot the Instance
+
+```bash
+sudo reboot
+```
+
+### 8.2 Reconnect & Activate Environment
+
+```bash
+ssh -X -i your-key.pem ubuntu@<EC2_PUBLIC_IP>
+source ~/6dof_pe_dp/bin/activate
+cd ~/6DoF_PE_DP
+```
+
+### 8.3 Build CUDA Extensions
+
+```bash
+bash build_all_env.sh
+```
+
+---
+
+## ✅ Run the Application
+
+```bash
+python3 run.py --test_scene_dir demo_data/tless_07 --demo
+```
+
+Then open your browser:
+
+```
+http://<EC2_PUBLIC_IP>:8050
+```
+
+---
+
+## 📌 Notes
+
+* Use `ssh -X` to enable GUI-based apps like `cv2.imshow`, or fallback to `cv2.imwrite`.
+* Kinect SDK is installed using `.deb` files due to lack of native support on Ubuntu 22.04.
+
+
 ## data_folder Structure
 
 ```

@@ -2,8 +2,6 @@ set -e  # Exit immediately on any error
 
 PROJ_ROOT=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-export CMAKE_PREFIX_PATH=$CONDA_PREFIX/lib/python3.9/site-packages/pybind11/share/cmake/pybind11
-
 # Detect & Set Compatible GCC for CUDA 11.8
 for v in 11 10 9 8 7; do
   if command -v gcc-$v &> /dev/null && command -v g++-$v &> /dev/null; then
