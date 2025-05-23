@@ -110,10 +110,6 @@ python run.py --test_scene_dir demo_data/data_folder --capture_background True
 
 # AWS Deployment
 
-This guide helps you deploy the `6DoF_PE_DP` pipeline on an AWS EC2 instance with either a **fully automated script** or **manual setup steps**.
-
----
-
 ## 1️⃣ Prepare S3 Storage
 
 ### 1.1 Create an S3 Bucket
