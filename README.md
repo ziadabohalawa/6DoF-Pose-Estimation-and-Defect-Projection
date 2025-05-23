@@ -333,11 +333,6 @@ http://<EC2_PUBLIC_IP>:8050
 
 ---
 
-## 📌 Notes
-
-* Use `ssh -X` to enable GUI-based apps like `cv2.imshow`, or fallback to `cv2.imwrite`.
-* Kinect SDK is installed using `.deb` files due to lack of native support on Ubuntu 22.04.
-
 
 ## data_folder Structure
 
@@ -405,7 +400,9 @@ Use the `--debug` flag for in-depth troubleshooting:
 - In the live run a Kinect Azure is needed, the data_foler should contain the meshes (mesh folder), icp_parameters.json and a mask of the Object.
 
 - Heatmaps can be generated using any external defect detection method, Just Update the get_heatmap function in datareader.py to implement the defect detection method
-
+- AWS Deployment:
+   * Use `ssh -X` to enable GUI-based apps like `cv2.imshow`, or fallback to `cv2.imwrite`.
+   * Kinect SDK is installed using `.deb` files due to lack of native support on Ubuntu 22.04.
 ## Acknowledgements
 
  - [FoundationPose](https://github.com/NVlabs/FoundationPose)
